@@ -1,0 +1,38 @@
+{
+ "500": {
+  "wrap": "/products/wrap-500.jpg",
+  "bodyW": 621,
+  "capW": 585,
+  "neckW": 533,
+  "capTop": 35,
+  "capBot": 150,
+  "bodyTop": 183,
+  "bottom": 1229,
+  "capColor": "#c9a849",
+  "gheeColor": "#f1b81b"
+ },
+ "250": {
+  "wrap": "/products/wrap-250.jpg",
+  "bodyW": 568,
+  "capW": 529,
+  "neckW": 479,
+  "capTop": 30,
+  "capBot": 130,
+  "bodyTop": 168,
+  "bottom": 1234,
+  "capColor": "#c29f49",
+  "gheeColor": "#f3b520"
+ },
+ "1000": {
+  "wrap": "/products/wrap-1000.jpg",
+  "bodyW": 603,
+  "capW": 534,
+  "neckW": 499,
+  "capTop": 20,
+  "capBot": 125,
+  "bodyTop": 158,
+  "bottom": 1233,
+  "capColor": "#c39d49",
+  "gheeColor": "#f2b620"
+ }
+}
