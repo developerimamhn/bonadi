@@ -10,9 +10,21 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 /** Insert one public-form row (contact message, newsletter). Returns { error }. */
 export const saveRow = (table, row) => supabase.from(table).insert(row);
 
-/** Visible products only; selects just the columns the storefront needs (faster). */
+/** Visible products only; uses the saved catalogue when Supabase is unavailable. */
 export async function fetchProducts() {
-  const { data, error } = await supabase.from("products")
-    .select("id,name,size,description,price,tag,image_url,image_credit,status").neq("status", "hidden").order("sort_order");
-  return error ? null : data;
+  try {
+    const { data, error } = await supabase.from("products")
+      .select("id,name,name_bn,size,description,price,compare_at_price,tag,image_url,image_credit,status").neq("status", "hidden").order("sort_order");
+    if (!error && Array.isArray(data)) return { data, isFallback: false };
+  } catch { /* use the saved catalogue below */ }
+
+  try {
+    const response = await fetch("/products/fallback.json");
+    if (response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data)) return { data, isFallback: true };
+    }
+  } catch { /* leave the existing session cache in place */ }
+
+  return { data: null, isFallback: false };
 }

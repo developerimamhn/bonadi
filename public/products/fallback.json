@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "name": "Gawa Ghee (Pure Cow Ghee)",
+    "name_bn": "খাঁটি গাওয়া ঘি",
+    "size": "500 g",
+    "description": "Pure cow ghee (গাওয়া ঘি) from Satkhira, Kaliganj, Bangladesh. Labelled 100% natural.",
+    "price": 950,
+    "compare_at_price": null,
+    "tag": null,
+    "image_url": "/products/ghee-500.webp",
+    "image_credit": null,
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "name": "Gawa Ghee (Pure Cow Ghee)",
+    "name_bn": "খাঁটি গাওয়া ঘি",
+    "size": "1 kg",
+    "description": "Pure cow ghee (গাওয়া ঘি) from Satkhira, Kaliganj, Bangladesh. Labelled 100% natural.",
+    "price": 1490,
+    "compare_at_price": null,
+    "tag": "Family size",
+    "image_url": "/products/ghee-1000.webp",
+    "image_credit": null,
+    "status": "active"
+  },
+  {
+    "id": 3,
+    "name": "Natural Honey (Modhu)",
+    "name_bn": "প্রাকৃতিক মধু",
+    "size": "500 g",
+    "description": "Natural honey.",
+    "price": 680,
+    "compare_at_price": null,
+    "tag": null,
+    "image_url": "https://images.unsplash.com/photo-1676313743558-009a9ebba3bf?auto=format&fit=crop&w=700&q=65",
+    "image_credit": "Bermix Studio|https://unsplash.com/@bermixstudio",
+    "status": "active"
+  },
+  {
+    "id": 4,
+    "name": "Sundarban Honey",
+    "name_bn": "সুন্দরবনের মধু",
+    "size": "250 g",
+    "description": "Natural honey.",
+    "price": 380,
+    "compare_at_price": null,
+    "tag": null,
+    "image_url": "https://images.unsplash.com/photo-1771405317876-616a62efd97e?auto=format&fit=crop&w=700&h=700&q=65",
+    "image_credit": "Madeline Liu|https://unsplash.com/@madeline_sd",
+    "status": "active"
+  },
+  {
+    "id": 5,
+    "name": "Cold-Pressed Mustard Oil",
+    "name_bn": "সরিষার তেল",
+    "size": "1 L",
+    "description": "Mustard oil — coming soon.",
+    "price": 420,
+    "compare_at_price": null,
+    "tag": "Coming soon",
+    "image_url": "https://images.unsplash.com/photo-1610012063609-bb63f427f11c?auto=format&fit=crop&w=700&h=520&q=65",
+    "image_credit": "Mahamudul Hasan|https://unsplash.com/@mahamud92",
+    "status": "coming_soon"
+  },
+  {
+    "id": 6,
+    "name": "Stone-Ground Mustard Oil",
+    "name_bn": "সরিষার তেল",
+    "size": "500 ml",
+    "description": "Mustard oil — coming soon.",
+    "price": 230,
+    "compare_at_price": null,
+    "tag": "Coming soon",
+    "image_url": "https://images.unsplash.com/photo-1610012063609-bb63f427f11c?auto=format&fit=crop&w=700&h=520&q=65",
+    "image_credit": "Mahamudul Hasan|https://unsplash.com/@mahamud92",
+    "status": "coming_soon"
+  }
+]

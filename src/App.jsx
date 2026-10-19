@@ -19,7 +19,7 @@ const Account = lazy(() => import("./Account.jsx"));
 const Admin = lazy(() => import("./Admin.jsx"));
 import Hero from "./Hero.jsx";
 import { ShieldCheck, Leaf, Heart, Truck, Award, Menu, X, Sun, Moon, ShoppingBag, ArrowUp, Phone, Mail, MapPin,
-  ChevronDown, Store, User, MessageCircle, Home as HomeIcon, Search, Facebook, Instagram, Youtube, Check, Star } from "lucide-react";
+  ChevronDown, ArrowRight, Store, User, MessageCircle, Home as HomeIcon, Search, Facebook, Instagram, Youtube, Check, Star } from "lucide-react";
 
 /* ============================ DATA ============================ */
 const PAGES = [["/", "Home"], ["/shop", "Shop"], ["/about", "About"], ["/contact", "Contact"], ["/track", "Track order"], ["/recipes", "Recipes"]];
@@ -202,10 +202,40 @@ function Home({ onAdd, products }) {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{products.filter((p) => p.status === "active").slice(0, 3).map((p) => <ProductCard key={p.id} p={p} onAdd={onAdd} />)}</div>
       <div className="mt-8 text-center"><a href="#/shop" className="btn btn-ghost">{t("View all products")}</a></div>
     </Section>
+    <StoreExperience />
     <Reviews />
     <Section title={t("Frequently Asked Questions")}><Faq /></Section>
     <Section title={t("Tried BONADI?")} sub={t("We read every message — tell us what you think.")}><div className="text-center"><a href="#/contact" className="btn">{t("Contact us")}</a></div></Section>
   </>);
+}
+
+function StoreExperience() {
+  return (
+    <section aria-labelledby="store-experience-title" className="relative isolate overflow-hidden text-white">
+      <div aria-hidden="true" className="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=1400&q=72" alt="" loading="eager" fetchPriority="low" decoding="async" className="h-full w-full object-cover object-center" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(20,37,27,.65)_0%,rgba(25,47,34,.45)_48%,rgba(28,48,35,.33)_100%)]" />
+      </div>
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 px-5 py-14 sm:py-20 md:grid-cols-2 md:gap-12">
+        <div className="max-w-xl">
+          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-gold"><Store size={16} />{t("BONADI 3D STORE")}</p>
+          <h2 id="store-experience-title" className="mt-3 font-display text-4xl font-bold leading-tight sm:text-5xl">{t("A new way to shop.")}</h2>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">{t("Walk through our virtual store, browse the shelves and add your favourites to your cart.")}</p>
+          <a href="#/store" className="btn mt-6 !px-6 !py-3 text-sm sm:text-base">{t("Enter 3D Store")}<ArrowRight size={18} /></a>
+        </div>
+        <a href="#/store" aria-label={t("Enter 3D Store")} className="store-preview group relative flex aspect-[4/3] items-end justify-center overflow-hidden bg-[radial-gradient(ellipse_at_50%_55%,rgba(218,177,92,.24),transparent_65%)]">
+          <div aria-hidden="true" className="absolute inset-x-[8%] top-[10%] h-[70%] border-x border-t border-white/10 bg-white/[.025]">
+            <div className="absolute inset-x-0 top-1/3 border-t border-white/10" />
+            <div className="absolute inset-x-0 top-2/3 border-t border-white/10" />
+          </div>
+          <div className="relative z-10 flex h-[76%] w-[86%] items-end justify-center gap-2 border-b-[10px] border-[#77512d] px-4 sm:gap-5">
+            {["250", "500", "1000"].map((size) => <img key={size} src={`/products/ghee-${size}.webp`} alt={`BONADI Gawa Ghee ${size} g`} loading="lazy" decoding="async" className={`h-auto w-[28%] object-contain drop-shadow-[0_18px_18px_rgba(0,0,0,.35)] transition-transform duration-300 group-hover:-translate-y-2 ${size === "250" ? "max-h-[66%]" : size === "500" ? "max-h-[82%]" : "max-h-[96%]"}`} />)}
+          </div>
+          <span className="absolute bottom-4 right-4 grid h-10 w-10 place-items-center rounded-full bg-gold text-ink transition-transform group-hover:translate-x-1"><ArrowRight size={18} /></span>
+        </a>
+      </div>
+    </section>
+  );
 }
 
 const catKey = (p) => (/honey|modhu/i.test(p.name) ? "honey" : /oil|tel/i.test(p.name) ? "oil" : "ghee");
@@ -375,17 +405,21 @@ function Nav({ path, theme, setTheme, cartCount, openCart, user, profile, lang, 
   return (
     <nav className={`fixed inset-x-0 top-0 z-50 transition-all ${solid ? "bg-bg/90 shadow-md backdrop-blur" : ""}`}>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <a href="#/" aria-label="Bonadi home" className="rounded-xl bg-white/95 px-3 py-1 shadow-lg"><img src="/logo.png" alt="Bonadi" width="160" height="58" className="h-9 w-auto md:h-10" /></a>
-        <ul className="hidden gap-5 lg:gap-8 md:flex">{PAGES.map(([p, l]) => <li key={p}><a href={"#" + p} className={`font-medium transition-colors hover:text-gold ${path === p ? "text-gold" : solid ? "" : "text-white"}`}>{t(l)}</a></li>)}</ul>
-        <div className={`flex items-center gap-3 ${solid ? "" : "text-white"}`}>
+        <a href="#/" aria-label="Bonadi home" className="shrink-0 bg-white px-3 py-3"><img src="/logo.png" alt="Bonadi" width="160" height="58" className="h-9 w-auto md:h-10" /></a>
+        <div className={`flex shrink-0 items-center gap-1 sm:gap-3 ${solid ? "" : "text-white"}`}>
           <button aria-label="Language" onClick={onLang} className="min-h-[36px] rounded-full border border-current px-3 text-xs font-bold">{lang === "bn" ? "EN" : "বাং"}</button>
-          <button aria-label="Toggle dark mode" className="p-2" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}</button>
-          <a href={user ? "#/account" : "#/login"} aria-label="Account" className="p-2"><User size={20} /></a>{profile?.role === "admin" && <a href="#/admin" className="text-xs font-bold underline">Admin</a>}
           <button aria-label="Open cart" className="relative p-2" onClick={openCart}><ShoppingBag size={20} />{cartCount > 0 && <span className="absolute -right-2 -top-2 grid h-4 w-4 place-items-center rounded-full bg-gold text-[10px] font-bold text-ink">{cartCount}</span>}</button>
-          <button className="p-2 md:hidden" aria-label="Menu" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
+          <button className="p-2" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
         </div>
       </div>
-      {open && <ul className="space-y-1 bg-bg px-5 pb-5 shadow-lg md:hidden">{PAGES.map(([p, l]) => <li key={p}><a href={"#" + p} className="block rounded-lg px-3 py-3 font-medium hover:bg-gold/20">{t(l)}</a></li>)}</ul>}
+      {open && <div className="bonadi-menu-panel mx-3 mb-3 rounded-2xl border border-gold/20 bg-bg/95 p-3 shadow-xl backdrop-blur lg:mx-auto lg:max-w-6xl">
+        <ul className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+          {PAGES.map(([p, l]) => <li key={p}><a href={"#" + p} className="block rounded-xl bg-card/70 px-3 py-3 font-medium transition hover:bg-gold/20">{t(l)}</a></li>)}
+          <li><a href={user ? "#/account" : "#/login"} className="block rounded-xl bg-card/70 px-3 py-3 font-medium transition hover:bg-gold/20">{t(user ? "Account" : "Log in")}</a></li>
+          {profile?.role === "admin" && <li><a href="#/admin" className="block rounded-xl bg-card/70 px-3 py-3 font-medium transition hover:bg-gold/20">Admin</a></li>}
+          <li><button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="flex w-full items-center gap-2 rounded-xl bg-card/70 px-3 py-3 text-left font-medium transition hover:bg-gold/20">{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}{t(theme === "dark" ? "Light mode" : "Dark mode")}</button></li>
+        </ul>
+      </div>}
     </nav>
   );
 }
@@ -394,7 +428,7 @@ function Footer() {
   return (
     <footer className="bg-brand pb-16 text-white/80 md:pb-0">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-4">
-        <div><img src="/logo.png" alt="Bonadi" width="160" height="58" className="h-12 w-auto rounded-xl bg-white/95 px-3 py-1" /><p className="mt-3 text-sm">Premium traditional foods — pure ghee, mustard oil and natural honey made with care.</p></div>
+        <div><img src="/logo.png" alt="Bonadi" width="160" height="58" className="h-12 w-auto  bg-white px-3 py-3" /><p className="mt-3 text-sm">Premium traditional foods — pure ghee, mustard oil and natural honey made with care.</p></div>
         <div><h4 className="mb-3 font-semibold text-white">{t("Quick Links")}</h4><ul className="space-y-2 text-sm">{PAGES.map(([p, l]) => <li key={p}><a className="hover:text-gold" href={"#" + p}>{t(l)}</a></li>)}</ul></div>
         <div><h4 className="mb-3 font-semibold text-white">{t("Contact")}</h4><p className="text-sm">{SITE.phone}{SITE.email && <><br />{SITE.email}</>}<br />{SITE.address}</p>
           <div className="mt-4 flex gap-3">{[[Facebook, "facebook", "Facebook"], [Instagram, "instagram", "Instagram"], [Youtube, "youtube", "YouTube"]].filter(([, k]) => SITE.social[k]).map(([I, k, n]) => <a key={k} href={SITE.social[k]} target="_blank" rel="noreferrer" aria-label={n} className="grid h-9 w-9 place-items-center rounded-full border border-gold/50 transition hover:bg-gold hover:text-ink"><I size={16} /></a>)}</div></div>
@@ -402,7 +436,6 @@ function Footer() {
       </div>
       <p className="border-t border-white/10 pt-5 text-center text-sm">© {new Date().getFullYear()} Bonadi. Pure Food, Honest Promise.</p>
       <p className="px-5 pt-3 text-center text-sm text-white/80">{[["delivery", "Delivery Policy"], ["returns", "Return & Refund"], ["privacy", "Privacy Policy"], ["terms", "Terms of Use"]].map(([s, l]) => <a key={s} href={"#/policy/" + s} className="mx-2 inline-block py-1 underline">{t(l)}</a>)}</p>
-      <p className="px-5 pb-6 pt-2 text-center text-xs text-white/50">Photos by Annie Spratt, Heather Newsom, Mila, Megumi Nachev, Bermix Studio, Madeline Liu, Mahamudul Hasan and William Jones on <a className="underline" href="https://unsplash.com" target="_blank" rel="noreferrer">Unsplash</a>.</p>
     </footer>
   );
 }
@@ -459,6 +492,7 @@ export default function App() {
   }, [path]);
   // Products come from Supabase; local PRODUCTS is the fallback if backend is not configured
   const [products, setProducts] = useState(() => { try { return JSON.parse(sessionStorage.getItem("bonadi-products")) || []; } catch { return []; } });  // instant repaint from cache
+  const [usingSavedProducts, setUsingSavedProducts] = useState(false);
   const [user, setUser] = useState(null), [profile, setProfile] = useState(null);
   const loadProfile = useCallback(async (u) => { if (!u) return setProfile(null); const { data } = await supabase.from("profiles").select("*").eq("id", u.id).single(); setProfile(data); }, []);
   // Auth session (profile fetch deferred with setTimeout to avoid auth-callback deadlocks)
@@ -469,7 +503,14 @@ export default function App() {
   }, [loadProfile]);
   // Referral capture: ?ref=CODE is remembered and attached to the order / signup
   useEffect(() => { captureRef(); }, []);
-  useEffect(() => { fetchProducts().then((r) => { if (r) { setProducts(r); try { sessionStorage.setItem("bonadi-products", JSON.stringify(r)); } catch {} } }); }, []);
+  useEffect(() => {
+    fetchProducts().then(({ data, isFallback }) => {
+      if (!data) return;
+      setProducts(data);
+      setUsingSavedProducts(isFallback && data.length > 0);
+      try { sessionStorage.setItem("bonadi-products", JSON.stringify(data)); } catch {}
+    });
+  }, []);
 
   useEffect(() => { document.documentElement.dataset.theme = theme; localStorage.setItem("bonadi-theme", theme); }, [theme]);
   useEffect(() => { const t = setTimeout(() => setLoaded(true), 600); return () => clearTimeout(t); }, []);
@@ -515,19 +556,22 @@ export default function App() {
 
   if (path === "/store") return L(<Store3D products={products} cart={cart} onAdd={add} setCart={setCart} clear={() => setCart([])} profile={profile} />);
 
-  return (<>
-    <div className={`preloader ${loaded ? "done" : ""}`}><div className="text-center"><div className="spinner mx-auto" /><img src="/logo.png" alt="Bonadi" className="mx-auto mt-5 h-12 w-auto rounded-xl bg-white/95 px-3 py-1" /></div></div>
+  return (<div className="bonadi-site" data-theme={theme}>
+    <div className={`preloader ${loaded ? "done" : ""}`}><div className="text-center"><div className="spinner mx-auto" /><img src="/logo.png" alt="Bonadi" className="mx-auto mt-5 h-12 w-auto bg-white px-3 py-3" /></div></div>
     <div ref={cursor} className="cursor" />
     <Nav lang={lang} onLang={toggleLang} user={user} profile={profile} path={path} theme={theme} setTheme={setTheme} cartCount={cart.reduce((s, i) => s + i.qty, 0)} openCart={() => setCartOpen(true)} />
-    <main>{page}</main>
+    <main>
+      {usingSavedProducts && <div role="status" className="mx-auto mt-4 max-w-6xl rounded-xl border border-gold/50 bg-ivory px-4 py-3 text-sm">{t("Showing the saved product list. Live prices could not be loaded — the final price is confirmed when you order.")}</div>}
+      {page}
+    </main>
     <Footer />
     <BottomBar path={path} cartCount={cart.reduce((s, i) => s + i.qty, 0)} openCart={() => setCartOpen(true)} />
     <a href={`https://wa.me/${SITE.tel.replace("+", "")}`} target="_blank" rel="noreferrer" aria-label={t("Chat on WhatsApp")} className="fixed bottom-[8.5rem] right-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-white shadow-lg md:bottom-20 md:right-5"><MessageCircle size={24} /></a>
     <CartDrawer profile={profile} open={cartOpen} close={() => setCartOpen(false)} cart={cart} clear={() => setCart([])} />
     {/* Sticky call-to-action */}
-    <a href={`tel:${SITE.tel}`} className="btn fixed bottom-5 left-5 z-40 hidden shadow-lg md:inline-flex"><Phone size={18} />{t("Order Now")}</a>
+    <a href={`tel:${SITE.tel}`} className="btn fixed bottom-5 left-5 z-40 !hidden shadow-lg md:!inline-flex"><Phone size={18} />{t("Order Now")}</a>
     {/* Back to top */}
     <button aria-label="Back to top" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className={`fixed bottom-20 right-4 z-40 grid h-12 w-12 md:bottom-5 md:right-5 place-items-center rounded-full bg-gold text-ink shadow-lg transition-all ${showTop ? "opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}><ArrowUp /></button>
-  </>);
+      className={`fixed bottom-24 right-4 z-40 grid h-12 w-12 md:bottom-5 md:right-5 place-items-center rounded-full bg-gold text-ink shadow-lg transition-all ${showTop ? "opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}><ArrowUp /></button>
+  </div>);
 }

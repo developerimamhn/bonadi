@@ -14,11 +14,11 @@ export const pname = (p) => (lang === "bn" && p.name_bn) || p.name;
 
 export const BN = {
   // navigation
-  Home: "হোম", Shop: "শপ", About: "আমাদের সম্পর্কে", Contact: "যোগাযোগ", "Track order": "অর্ডার ট্র্যাক", Cart: "কার্ট", "Order Now": "এখনই অর্ডার করুন",
+  Home: "হোম", Shop: "শপ", About: "আমাদের সম্পর্কে", Contact: "যোগাযোগ", "Track order": "অর্ডার ট্র্যাক", Cart: "কার্ট", "Order Now": "এখনই অর্ডার করুন", Account: "অ্যাকাউন্ট", "Log in": "লগ ইন", "Dark mode": "ডার্ক মোড", "Light mode": "লাইট মোড",
   // hero
-  "Satkhira · Bangladesh": "সরাসরি সাতক্ষীরা থেকে", "Pure Food,": "খাঁটি গাওয়া ঘির ঘ্রাণ আর স্বাদ,", "Honest Promise.": "পছন্দ না হলে ৭ দিনে টাকা ফেরত।",
-  "Authentic gawa ghee, natural honey and more — made with care and delivered to your door.": "খাঁটি গাওয়া ঘি, প্রাকৃতিক মধু আর সরিষার তেল — সাতক্ষীরা থেকে সরাসরি আপনার দরজায়। ডেলিভারি ফ্রি, পণ্য হাতে পেয়ে টাকা দিন, আর পছন্দ না হলে ৭ দিনের মধ্যে রিফান্ড বা বদলি।",
-  "Shop Now": "আজই খাঁটি ঘি অর্ডার করুন", "Try the 3D Store": "৩ডি স্টোরে ঘুরে দেখুন", "100% Natural": "১০০% প্রাকৃতিক", "Free delivery": "ডেলিভারি একদম ফ্রি", "Cash on Delivery": "হাতে পেয়ে টাকা দিন",
+  "Satkhira · Bangladesh": "সাতক্ষীরা থেকে", "Pure Food,": "খাঁটি", "Honest Promise.": "গাওয়া ঘি",
+  "Authentic gawa ghee, natural honey and more — made with care and delivered to your door.": "সাতক্ষীরা থেকে, সরাসরি আপনার ঘরে।",
+  "Shop Now": "ঘি কিনুন", "Try the 3D Store": "৩ডি স্টোরে ঘুরে দেখুন", "100% Natural": "১০০% প্রাকৃতিক", "Free delivery": "ডেলিভারি একদম ফ্রি", "Cash on Delivery": "হাতে পেয়ে টাকা দিন",
   // home
   "What Makes Bonadi Special": "বোনাদি থেকে কিনলে আপনি যা পাচ্ছেন", "Five promises we keep with every jar, bottle and box.": "ঝুঁকি আমাদের, নিশ্চিন্ত আপনি — প্রতিটি অর্ডারে পাঁচটি প্রতিশ্রুতি।",
   "100% Authentic": "১০০% খাঁটি, ১০০% নিশ্চিন্ত", "Carefully selected, quality ingredients.": "বাছাই করা মানসম্পন্ন উপাদান — খাঁটি না মনে হলে ৭ দিনের মধ্যে জানান, ফেরত নেব।",
@@ -29,11 +29,13 @@ export const BN = {
   "Our Best Sellers": "যা সবচেয়ে বেশি অর্ডার হয়", "Pure gawa ghee and natural honey — made with care.": "খাঁটি গাওয়া ঘি ও প্রাকৃতিক মধু — প্রথমবার কিনছেন? ৭ দিনের গ্যারান্টিতে নির্ভয়ে চেখে দেখুন।", "View all products": "সব পণ্য দেখুন",
   "Frequently Asked Questions": "অর্ডারের আগে যা জানতে চান", "Tried BONADI?": "বোনাদি চেখে দেখেছেন? আপনার কথাই আমাদের সেরা বিজ্ঞাপন।", "We read every message — tell us what you think.": "আমরা প্রতিটি বার্তা পড়ি — ভালো বা মন্দ, খোলাখুলি জানান।", "Contact us": "আমাদের জানান",
   "Happy customers": "সন্তুষ্ট গ্রাহক", "Orders delivered": "ডেলিভারি হওয়া অর্ডার",
+  "BONADI 3D STORE": "বোনাদি ৩ডি স্টোর", "A new way to shop.": "ঘুরে ঘুরে পছন্দ করে কিনুন।", "Walk through our virtual store, browse the shelves and add your favourites to your cart.": "ভার্চুয়াল দোকানে তাক ঘুরে দেখুন, পছন্দের পণ্য বেছে কার্টে নিন।",
   // shop
   "Shop Bonadi": "খাঁটি খাবারের দোকান — বোনাদি", "Pure ghee, mustard oil and honey — delivered fresh.": "খাঁটি ঘি, সরিষার তেল ও মধু — ফ্রি ডেলিভারি, ক্যাশ অন ডেলিভারি, ৭ দিনের রিটার্ন গ্যারান্টি।",
   "Prefer to walk around?": "ঘুরে ঘুরে কিনতে ভালো লাগে?", "Try our optional 3D store — pick products from the shelves and pay at the counter.": "আমাদের ৩ডি স্টোরে ঢুকে পড়ুন — তাক থেকে পণ্য তুলুন, কাউন্টারে অর্ডার করুন। একদম দোকানে ঘোরার অনুভূতি।", "Enter 3D Store": "৩ডি স্টোরে ঢুকুন",
   "Search products": "পণ্য খুঁজুন", All: "সব", Ghee: "ঘি", Honey: "মধু", "Mustard oil": "সরিষার তেল", "Sort": "সাজান", "Featured": "সেরা পছন্দ", "Price: low to high": "দাম: কম থেকে বেশি", "Price: high to low": "দাম: বেশি থেকে কম",
   "No products match your search.": "এই নামে কোনো পণ্য পাইনি। অন্য নামে খুঁজে দেখুন।", "Clear filters": "ফিল্টার মুছুন",
+  "Showing the saved product list. Live prices could not be loaded — the final price is confirmed when you order.": "সংরক্ষিত পণ্য তালিকা দেখানো হচ্ছে। লাইভ দাম লোড হয়নি; অর্ডারের সময় চূড়ান্ত দাম নিশ্চিত হবে।",
   "Coming Soon": "খুব শীঘ্রই আসছে", Add: "কার্টে নিন",
   // cart
   "Your Cart": "আপনার কার্ট", "Your cart is empty.": "কার্ট খালি। খাঁটি ঘি বা মধু দিয়ে শুরু করুন।", Total: "মোট (ডেলিভারি ফ্রি)", "Customer name": "আপনার নাম", "Phone (01XXXXXXXXX)": "ফোন (01XXXXXXXXX)", "Delivery address": "কোথায় পৌঁছে দেব? (পূর্ণ ঠিকানা)",
