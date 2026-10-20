@@ -1,0 +1,3 @@
+# Steadfast signs its webhook with its own token, so this function must accept requests without a Supabase JWT.
+[functions.steadfast-webhook]
+verify_jwt = false

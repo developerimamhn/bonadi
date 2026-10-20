@@ -1,6 +1,6 @@
 {
  "500": {
-  "wrap": "/products/wrap-500.jpg",
+  "wrap": "/products/wrap-500.webp",
   "bodyW": 621,
   "capW": 585,
   "neckW": 533,
@@ -12,7 +12,7 @@
   "gheeColor": "#f1b81b"
  },
  "250": {
-  "wrap": "/products/wrap-250.jpg",
+  "wrap": "/products/wrap-250.webp",
   "bodyW": 568,
   "capW": 529,
   "neckW": 479,
@@ -24,7 +24,7 @@
   "gheeColor": "#f3b520"
  },
  "1000": {
-  "wrap": "/products/wrap-1000.jpg",
+  "wrap": "/products/wrap-1000.webp",
   "bodyW": 603,
   "capW": 534,
   "neckW": 499,

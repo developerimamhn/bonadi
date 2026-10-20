@@ -70,7 +70,7 @@ function signTexture(text, w, h, bg, fg, size = 90, font = 'Georgia, "Noto Sans 
 const useSign = (...a) => useMemo(() => signTexture(...a), [a.join("|")]);   // eslint-disable-line
 
 /* ---------- Jar kit ----------
- * Ghee: built from YOUR bottle photos. public/products/wrap-{250,500,1000}.jpg are the real bottle artwork unwrapped onto a cylinder,
+ * Ghee: built from YOUR bottle photos. public/products/wrap-{250,500,1000}.webp are the real bottle artwork unwrapped onto a cylinder,
  * ghee-meta.json holds the measured proportions (body/neck/cap), so shape, gold cap, colours and label match the supplied references.
  * Other products (honey, oil) have no reference photos yet, so they use a generic jar with the BONADI logo label. */
 const GLASS = [[0, -0.16], [0.108, -0.16], [0.125, -0.145], [0.125, 0.07], [0.108, 0.105], [0.075, 0.125], [0.075, 0.15]].map(([x, y]) => new THREE.Vector2(x, y));
@@ -377,6 +377,11 @@ export default function Store3D({ products, cart, onAdd, setCart, clear, profile
 
   const say = useCallback((m) => { setToast(m); clearTimeout(toastT.current); toastT.current = setTimeout(() => setToast(""), 2400); }, []);
   const unlock = useCallback(() => { noPause.current = true; document.exitPointerLock?.(); setTimeout(() => { noPause.current = false; }, 300); }, []);
+  useEffect(() => {   // the 3D store's own typefaces load only when the store opens, so the main site stays light
+    if (document.getElementById("bonadi-3d-fonts")) return;
+    const l = Object.assign(document.createElement("link"), { id: "bonadi-3d-fonts", rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" });
+    document.head.appendChild(l);
+  }, []);
   useEffect(() => { window.__lenis?.stop(); document.title = "Bonadi 3D Store"; return () => { window.__lenis?.start(); unlock(); }; }, [unlock]);
   useEffect(() => { if (profile) setF((x) => ({ ...x, name: x.name || profile.full_name || "", phone: x.phone || profile.phone || "" })); }, [profile]);
   useEffect(() => {   // preload: logo, Bengali font, real bottle artwork (wrap textures) before building the scene
