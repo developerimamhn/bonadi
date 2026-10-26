@@ -35,8 +35,12 @@ Deno.serve(async (req) => {
   if (!TOKEN) return json({ status: "error", message: "STEADFAST_WEBHOOK_TOKEN is not set" }, 500);
 
   const raw = new Uint8Array(await req.arrayBuffer());
+  // Accept either form Steadfast may use: "Authorization: Bearer <token>" or an X-Signature HMAC of the body.
+  const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "").trim();
   const given = (req.headers.get("x-signature") ?? "").trim().toLowerCase();
-  if (!safeEqual(given, await hmacHex(TOKEN, raw))) return json({ status: "error", message: "invalid signature" }, 401);
+  const okBearer = bearer !== "" && safeEqual(bearer, TOKEN);
+  const okSig = given !== "" && safeEqual(given, await hmacHex(TOKEN, raw));
+  if (!okBearer && !okSig) return json({ status: "error", message: "invalid signature" }, 401);
 
   let ev: Record<string, unknown>;
   try { ev = JSON.parse(new TextDecoder().decode(raw)); } catch { return json({ status: "error", message: "invalid JSON" }, 400); }

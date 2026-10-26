@@ -58,7 +58,7 @@ export default function Hero({ products = [] }) {
           <div aria-hidden="true" className="absolute inset-x-[4%] bottom-0 h-[14%] rounded-[50%] bg-black/30 blur-xl" />
           {BOTTLES.map((b) => (
             <div key={b.k} className="absolute bottom-[3%]" style={{ left: b.x + "%", height: b.h + "%", zIndex: b.z, transform: `translate3d(calc(var(--mx) * ${b.d}px), calc(var(--my) * ${b.d * 0.6}px), 0) rotate(${b.r}deg)`, transition: "transform .25s ease-out" }}>
-              <img src={`/products/ghee-${b.k}.webp`} alt={b.alt} width={b.w} height="700" decoding="async" fetchpriority={b.k === "500" ? "high" : "auto"} loading={b.k === "500" ? "eager" : "lazy"}
+              <img src={`/products/ghee-${b.k}.webp`} alt={b.alt} width={b.w} height="700" decoding="async" fetchpriority={b.k === "500" ? "high" : "auto"} loading="eager"
                 className="float h-full w-auto drop-shadow-[0_28px_28px_rgba(0,0,0,.5)]" style={{ animationDelay: b.delay }} />
             </div>))}
           {ghee && <a href="#/shop" className="absolute right-0 top-[40%] hidden sm:block z-10 rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-sm shadow-2xl backdrop-blur-xl transition hover:scale-105" style={{ zIndex: 5 }}>

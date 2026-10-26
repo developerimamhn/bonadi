@@ -144,6 +144,20 @@ html[lang="bn"] body { line-height: 1.85; }           /* Bangla needs more line 
 
 @media (prefers-reduced-motion: reduce) { *, html { animation: none !important; transition: none !important; scroll-behavior: auto; } .bonadi-site .reveal { opacity:1; transform:none; } .hero-in { opacity: 1 !important; } .split .sw-i { transform: none !important; } .product-card .img-mask { clip-path: none !important; } }
 
+/* Below-the-fold sections are laid out and painted only when they come near the screen (big win on slow phones).
+   "auto" remembers each section's real height once seen, so the scrollbar does not jump. */
+.bonadi-site main > section, .bonadi-site main > .hscroll, .bonadi-site > footer { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+
+/* ---------- 3D store HUD ---------- */
+.s3d-glass { background: rgba(28,36,20,.64); color: #fff; border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.s3d-vignette { background: radial-gradient(ellipse at 50% 45%, transparent 58%, rgba(35,22,8,.34) 100%); }
+@keyframes s3d-up { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+.s3d-up { animation: s3d-up .35s var(--ease) both; }
+@keyframes s3d-bump { 0% { transform: scale(1) } 30% { transform: scale(1.14) } 60% { transform: scale(.96) } 100% { transform: scale(1) } }
+.s3d-bump { animation: s3d-bump .5s var(--ease); }
+@keyframes s3d-confetti { from { transform: translate3d(0,-10vh,0) rotate(0); } to { transform: translate3d(var(--dx),110vh,0) rotate(720deg); } }
+.s3d-confetti { position: absolute; top: 0; width: 10px; height: 14px; border-radius: 2px; animation: s3d-confetti 2.8s cubic-bezier(.2,.6,.4,1) both; }
+
 /* Loading spinner (3D store) */
 .spinner { width:56px; height:56px; border-radius:50%; border:4px solid rgba(225,161,62,.25); border-top-color: var(--gold); animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -163,16 +177,10 @@ html[lang="bn"] body { line-height: 1.85; }           /* Bangla needs more line 
 .split .sw { display: inline-block; overflow: hidden; vertical-align: top; padding: .14em .02em .12em; margin: -.14em -.02em -.12em; }
 .split .sw-i { display: inline-block; transform: translateY(110%); transition: transform 1s cubic-bezier(.16,1,.3,1) calc(var(--d, 0ms) + var(--i) * 55ms); will-change: transform; }
 .split.in .sw-i { transform: none; }
-.intro .split.in .sw-i { transform: translateY(110%); transition: none; }   /* wait for the intro loader */
-.intro .hero-in { animation-play-state: paused; }
 
 /* Product images open like a shutter when the card scrolls in */
 .product-card .img-mask { clip-path: inset(100% 0 0 0 round 20px); transition: clip-path 1.1s cubic-bezier(.16,1,.3,1) .1s; }
 .product-card.in .img-mask { clip-path: inset(0 0 0 0 round 20px); }
-
-/* Intro loader lifts away */
-.loader { transition: clip-path 1s cubic-bezier(.76,0,.24,1); clip-path: inset(0 0 0 0); }
-.loader.loader-out { clip-path: inset(0 0 100% 0); }
 
 /* Page-change curtain */
 .curtain { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: var(--brand); animation: curtain-up .85s cubic-bezier(.76,0,.24,1) .05s forwards; }

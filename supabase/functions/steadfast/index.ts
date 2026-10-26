@@ -40,20 +40,31 @@ Deno.serve(async (req) => {
   if (action === "create") {
     if (order.consignment_id) return reply({ ok: true, message: "Already booked.", tracking_code: order.tracking_code });
     if (order.status === "cancelled") return fail("This order is cancelled.");
+    // Lock the order so a second click / second admin cannot book a duplicate parcel while this one is in flight.
+    const { data: locked } = await db.from("orders").update({ courier: "booking" }).eq("id", order.id).is("consignment_id", null).is("courier", null).select("id");
+    if (!locked?.length) return fail("This order is already being sent to Steadfast. Refresh in a moment.", 409);
+    const unlock = () => db.from("orders").update({ courier: null }).eq("id", order.id).eq("courier", "booking");
     const items = (order.items ?? []).map((i: { name: string; size?: string; qty: number }) => `${i.name} ${i.size ?? ""} x${i.qty}`).join(", ");
-    const res = await fetch(`${STEADFAST_API}/create_order`, { method: "POST", headers: keys(), body: JSON.stringify({
-      invoice: invoiceFor(order.id),
-      recipient_name: String(order.name).slice(0, 100),
-      recipient_phone: localPhone(String(order.phone)),
-      recipient_address: String(order.address).slice(0, 250),
-      cod_amount: Number(order.subtotal),
-      item_description: items.slice(0, 250),
-      note: `BONADI order #${order.id}`,
-    }) });
+    let res: Response;
+    try {
+      res = await fetch(`${STEADFAST_API}/create_order`, { method: "POST", headers: keys(), signal: AbortSignal.timeout(20000), body: JSON.stringify({
+        invoice: invoiceFor(order.id),
+        recipient_name: String(order.name).slice(0, 100),
+        recipient_phone: localPhone(String(order.phone)),
+        recipient_address: String(order.address).slice(0, 250),
+        cod_amount: Number(order.subtotal),
+        item_description: items.slice(0, 250),
+        note: `BONADI order #${order.id}`,
+      }) });
+    } catch (e) {
+      await unlock();
+      return fail(`Steadfast did not answer (${(e as Error).name}). Check the Steadfast portal for invoice ${invoiceFor(order.id)} before trying again.`, 504);
+    }
     const j = await res.json().catch(() => ({}));
     const c = j?.consignment;
     if (j?.status !== 200 || !c?.consignment_id) {
       const why = j?.errors ? Object.values(j.errors).flat().join(" ") : j?.message;
+      await unlock();
       return fail(`Steadfast: ${why || `HTTP ${res.status}`}`, 502);
     }
     const { error: e1 } = await db.from("orders").update({ courier: "steadfast", consignment_id: c.consignment_id, tracking_code: c.tracking_code }).eq("id", order.id);

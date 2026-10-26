@@ -1,5 +1,5 @@
 /**
- * Motion layer for the storefront (Awwwards-style): intro loader, word-by-word text reveals, route curtain,
+ * Motion layer for the storefront (Awwwards-style): word-by-word text reveals, route curtain,
  * scroll progress, follower cursor + magnetic buttons, scroll-lit manifesto and a pinned horizontal section.
  * Everything is DOM-driven (refs + rAF), so scrolling never re-renders React, and everything switches off
  * for visitors who ask for reduced motion.
@@ -29,38 +29,6 @@ export function SplitText({ text = "", chars = false, className = "", inner = ""
       <span className="sr-only">{text}</span>
       {parts.map((w, i) => <React.Fragment key={i}><span className="sw" aria-hidden="true"><span className={`sw-i ${inner}`} style={{ "--i": i }}>{w}</span></span>{!chars && i < parts.length - 1 ? " " : null}</React.Fragment>)}
     </span>
-  );
-}
-
-/** First-visit intro: counter 0 → 100 over the brand surface, then the panel lifts away. Once per browser session. */
-export function Loader({ tagline }) {
-  const [show, setShow] = useState(() => { if (REDUCED) return false; try { return !sessionStorage.getItem("bonadi-intro"); } catch { return false; } });
-  const [out, setOut] = useState(false), num = useRef(null), bar = useRef(null);
-  useEffect(() => {
-    if (!show) return;
-    try { sessionStorage.setItem("bonadi-intro", "1"); } catch { /* private mode */ }
-    document.documentElement.classList.add("intro");            // holds the hero entrance until the panel lifts
-    const t0 = performance.now(), dur = 1150; let raf, t1, t2;
-    const step = (now) => {
-      const k = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - k, 3);
-      if (num.current) num.current.textContent = Math.round(e * 100);
-      if (bar.current) bar.current.style.transform = `scaleX(${e})`;
-      if (k < 1) raf = requestAnimationFrame(step);
-      else { t1 = setTimeout(() => { setOut(true); document.documentElement.classList.remove("intro"); }, 150); t2 = setTimeout(() => setShow(false), 1150); }
-    };
-    raf = requestAnimationFrame(step);
-    return () => { cancelAnimationFrame(raf); clearTimeout(t1); clearTimeout(t2); document.documentElement.classList.remove("intro"); };
-  }, [show]);
-  if (!show) return null;
-  return (
-    <div aria-hidden="true" className={`loader hero-bg fixed inset-0 z-[10000] flex flex-col justify-between p-6 text-white md:p-10 ${out ? "loader-out" : ""}`}>
-      <span className="w-fit rounded-full bg-white px-4 py-2"><img src="/logo.png" alt="" className="h-8 w-auto" /></span>
-      <div className="flex items-end justify-between gap-6">
-        <span className="font-display text-[28vw] leading-[.8] md:text-[16vw]"><span ref={num}>0</span><span className="text-gold">%</span></span>
-        <span className="hidden max-w-xs pb-4 text-right text-white/70 md:block">{tagline}</span>
-      </div>
-      <span ref={bar} className="absolute bottom-0 left-0 h-1 w-full origin-left bg-gold" style={{ transform: "scaleX(0)" }} />
-    </div>
   );
 }
 
@@ -121,7 +89,7 @@ export function Manifesto({ text, eyebrow }) {
     });
   }, [text]);
   return (
-    <div ref={box} role="region" aria-label={eyebrow} className="relative h-[230vh]">
+    <div ref={box} role="region" aria-label={eyebrow} className="relative h-[160vh] md:h-[230vh]">
       <div className="sticky top-0 flex h-[100svh] items-center">
         <div className="mx-auto max-w-5xl px-5">
           <span className="eyebrow">{eyebrow}</span>

@@ -9,14 +9,20 @@
   <meta property="og:title" content="Bonadi — Pure Food, Honest Promise" />
   <meta property="og:description" content="Authentic ghee, mustard oil and honey made with care." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1594885270166-07d20113fb9a?auto=format&fit=crop&w=1200&h=630&q=70" />
+  <meta property="og:image" content="/og-image.jpg" />  <!-- after deploy, make this a full URL: https://YOUR-DOMAIN/og-image.jpg -->
+  <meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
   <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <meta name="theme-color" content="#3F562A" />
   <link rel="preload" as="image" href="/products/ghee-500.webp" fetchpriority="high" />
+  <!-- open the database connection while the app downloads, so products arrive sooner -->
+  <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet" />
+  <!-- fonts load without blocking the first paint; text shows in the system font and swaps in -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;700&display=swap" /></noscript>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Bonadi","slogan":"Pure Food, Honest Promise","telephone":"+8801744483744","address":{"@type":"PostalAddress","addressLocality":"Kaliganj, Satkhira","addressCountry":"BD"},"description":"Premium traditional foods: pure ghee, honey and mustard oil."}</script>
 </head>
 <body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body>

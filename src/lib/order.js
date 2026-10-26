@@ -1,5 +1,4 @@
 /** Shared order helpers — used by BOTH the normal cart drawer and the 3D store, so there is one order system (place_order RPC). */
-import { supabase } from "./supabase.js";
 import { getRef } from "./ref.js";
 
 export const validOrder = (f) =>
@@ -7,6 +6,7 @@ export const validOrder = (f) =>
 
 /** Places a Cash-on-Delivery order and triggers the server-side order email notification if the edge function exists. */
 export const submitOrder = async (f, cart, dropship = false) => {
+  const { supabase } = await import("./supabase.js");   // SDK is loaded on demand, not on first paint
   const { data, error } = await supabase.rpc("place_order", {
     p_name: f.name,
     p_phone: f.phone,

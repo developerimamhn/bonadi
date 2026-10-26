@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo, lazy, Suspens
 
 /* 3D hero is code-split so Three.js never blocks first paint */
 import Lenis from "lenis";
-import { supabase, saveRow, fetchProducts } from "./lib/supabase.js";
+import { db, saveRow, fetchProducts } from "./lib/db.js";
 const Store3D = lazy(() => import("./Store3D.jsx"));   // optional 3D shopping mode (separate chunk)
 import { SITE, FAQ, POLICIES } from "./config.js";
 import { t, pname, getLang, setLang } from "./i18n.js";
@@ -18,7 +18,7 @@ const AuthPage = lazy(() => import("./Auth.jsx"));
 const Account = lazy(() => import("./Account.jsx"));
 const Admin = lazy(() => import("./Admin.jsx"));
 import Hero from "./Hero.jsx";
-import { SplitText, Loader, RouteCurtain, ScrollProgress, Cursor, Manifesto, HScroll } from "./fx.jsx";
+import { SplitText, RouteCurtain, ScrollProgress, Cursor, Manifesto, HScroll } from "./fx.jsx";
 import { ShieldCheck, Leaf, Heart, Truck, Award, Menu, X, Sun, Moon, ShoppingBag, ArrowUp, Phone, Mail, MapPin,
   ChevronDown, ArrowRight, Store, User, MessageCircle, Home as HomeIcon, Search, Facebook, Instagram, Youtube, Check, Star, Plus, Minus, Trash2 } from "lucide-react";
 
@@ -92,7 +92,7 @@ function Counter({ to, suffix }) {
 /** Real numbers only: appears automatically once there are at least 10 delivered-order customers. */
 function Stats() {
   const [s, setS] = useState(null);
-  useEffect(() => { supabase.rpc("site_stats").then(({ data }) => setS(data?.[0] || null)); }, []);
+  useEffect(() => { db().then((s) => s.rpc("site_stats")).then(({ data }) => setS(data?.[0] || null)); }, []);
   if (!s || Number(s.customers) < 10) return null;
   return (
     <div className="mx-auto max-w-6xl px-5"><div className="mx-auto grid grid-cols-2 gap-8 rounded-[28px] bg-brand px-5 py-14 text-center text-white">
@@ -142,6 +142,11 @@ function ProductCard({ p, onAdd }) {
     </article>
   );
 }
+
+/** Placeholder card while products load, so the grid keeps its height (no layout jump when they arrive). */
+const CardSkeleton = () => (
+  <div aria-hidden="true" className="animate-pulse"><div className="h-64 rounded-[20px] bg-gold/15" /><div className="mx-2 mt-4 h-5 w-2/3 rounded-full bg-gold/15" /><div className="mx-2 mt-3 h-7 w-1/3 rounded-full bg-gold/15" /></div>
+);
 
 /** Contact form with client-side validation. */
 function ContactForm() {
@@ -213,7 +218,7 @@ function Home({ onAdd, products }) {
     </Section>
 
     <Section title={t("Our Best Sellers")} sub={t("Pure gawa ghee and natural honey — made with care.")}>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{products.filter((p) => p.status === "active").slice(0, 3).map((p) => <ProductCard key={p.id} p={p} onAdd={onAdd} />)}</div>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{products.length ? products.filter((p) => p.status === "active").slice(0, 3).map((p) => <ProductCard key={p.id} p={p} onAdd={onAdd} />) : [0, 1, 2].map((k) => <CardSkeleton key={k} />)}</div>
       <div className="mt-10 text-center"><a href="#/shop" className="btn btn-ghost">{t("View all products")}<ArrowRight size={18} /></a></div>
     </Section>
     <HowItWorks />
@@ -365,7 +370,8 @@ function Shop({ onAdd, products }) {
         </div>
       </div>
     </div>
-    <Section className="!pt-8">{list.length ? <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">{list.map((p) => <ProductCard key={p.id} p={p} onAdd={onAdd} />)}</div>
+    <Section className="!pt-8">{!products.length ? <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">{[0, 1, 2, 3, 4, 5].map((k) => <CardSkeleton key={k} />)}</div>
+      : list.length ? <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">{list.map((p) => <ProductCard key={p.id} p={p} onAdd={onAdd} />)}</div>
       : <div className="py-10 text-center"><p className="text-muted">{t("No products match your search.")}</p><button className="btn mt-4" onClick={reset}>{t("Clear filters")}</button></div>}</Section>
     <div className="mx-auto max-w-6xl px-5 pb-16"><a href="#/store" className="card flex flex-wrap items-center justify-between gap-3 p-5"><span><b className="font-display text-xl">{t("Prefer to walk around?")}</b> <span className="hidden text-muted sm:inline">{t("Try our optional 3D store — pick products from the shelves and pay at the counter.")}</span></span><span className="btn !py-2 text-sm"><Store size={16} />{t("Enter 3D Store")}</span></a></div>
   </>);
@@ -417,7 +423,7 @@ function Track() {
     e.preventDefault(); if (busy) return;
     if (!/^\d+$/.test(f.id.trim()) || f.phone.trim().length < 6) return setRes(null);
     setBusy(true);
-    const [{ data }, courier] = await Promise.all([supabase.rpc("track_order", { p_id: Number(f.id), p_phone: f.phone }), supabase.rpc("track_courier", { p_id: Number(f.id), p_phone: f.phone })]);
+    const sb = await db(), [{ data }, courier] = await Promise.all([sb.rpc("track_order", { p_id: Number(f.id), p_phone: f.phone }), sb.rpc("track_courier", { p_id: Number(f.id), p_phone: f.phone })]);
     setBusy(false); setRes(data?.[0] ? { ...data[0], courier: courier.data?.[0] || null } : null);
   };
   const step = res ? STEPS.indexOf(res.status) : -1;
@@ -478,7 +484,7 @@ function Recipes() {
 /** Approved, verified-purchase reviews only. Shows nothing until the first real review exists. */
 function Reviews() {
   const [rows, setRows] = useState([]);
-  useEffect(() => { supabase.from("reviews").select("name,rating,comment,product_name").eq("status", "approved").order("id", { ascending: false }).limit(50).then(({ data }) => setRows(data || [])); }, []);
+  useEffect(() => { db().then((s) => s.from("reviews").select("name,rating,comment,product_name").eq("status", "approved").order("id", { ascending: false }).limit(50)).then(({ data }) => setRows(data || [])); }, []);
   if (!rows.length) return null;
   const avg = rows.reduce((s, r) => s + r.rating, 0) / rows.length;
   return (
@@ -492,7 +498,7 @@ function ReviewForm({ orderId, phone }) {
   const [r, setR] = useState(5), [c, setC] = useState(""), [msg, setMsg] = useState(""), [done, setDone] = useState(false), [busy, setBusy] = useState(false);
   const send = async (e) => {
     e.preventDefault(); if (busy) return; setBusy(true);
-    const { error } = await supabase.rpc("submit_review", { p_order: orderId, p_phone: phone, p_rating: r, p_comment: c }); setBusy(false);
+    const { error } = await (await db()).rpc("submit_review", { p_order: orderId, p_phone: phone, p_rating: r, p_comment: c }); setBusy(false);
     if (error) setMsg(error.message.includes("already") ? t("You already reviewed this order.") : t("Could not send. Please try again.")); else setDone(true);
   };
   if (done) return <p className="rounded-xl bg-gold/20 p-3 text-sm">{t("Thank you! Your review will appear after approval.")}</p>;
@@ -536,7 +542,7 @@ function Nav({ path, theme, setTheme, cartCount, openCart, user, profile, lang, 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3">
       <nav aria-label="Main" className={`nav-pill mx-auto flex max-w-6xl items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-2 transition-all duration-300 ${solid ? "border-brand/10 bg-card/85 text-ink shadow-lg backdrop-blur-xl" : "border-white/15 bg-white/10 text-white backdrop-blur-md"}`}>
-        <a href="#/" aria-label="Bonadi home" className="shrink-0 rounded-full bg-white px-4 py-1.5"><img src="/logo.png" alt="Bonadi" width="160" height="58" className="h-8 w-auto md:h-9" /></a>
+        <a href="#/" aria-label="Bonadi home" className="shrink-0 rounded-full bg-white px-4 py-1.5"><img src="/logo.webp" alt="Bonadi" width="160" height="58" className="h-8 w-auto md:h-9" /></a>
         <ul className="mx-auto hidden items-center gap-1 lg:flex">
           {PAGES.map(([p, l]) => <li key={p}><a href={"#" + p} aria-current={path === p ? "page" : undefined} className={`rounded-full px-4 py-2 text-sm font-semibold transition ${path === p ? "bg-gold text-ink" : "hover:bg-gold/20"}`}>{t(l)}</a></li>)}
         </ul>
@@ -566,7 +572,7 @@ function Footer() {
     <footer className="mt-4 overflow-hidden rounded-t-[32px] bg-brand pb-24 text-white/80 md:rounded-t-[48px] md:pb-6">
       <div className="mx-auto max-w-6xl px-5 pt-16"><p className="max-w-3xl font-display text-4xl leading-tight text-white md:text-7xl"><SplitText text={t("Pure Food, Honest Promise")} /><span className="text-gold">.</span></p></div>
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4">
-        <div><span className="inline-block rounded-full bg-white px-4 py-2"><img src="/logo.png" alt="Bonadi" width="160" height="58" className="h-9 w-auto" /></span><p className="mt-4 text-sm">{t("Premium traditional foods — pure ghee, mustard oil and natural honey made with care.")}</p></div>
+        <div><span className="inline-block rounded-full bg-white px-4 py-2"><img src="/logo.webp" alt="Bonadi" width="160" height="58" className="h-9 w-auto" /></span><p className="mt-4 text-sm">{t("Premium traditional foods — pure ghee, mustard oil and natural honey made with care.")}</p></div>
         <div><h4 className="mb-3 font-semibold text-white">{t("Quick Links")}</h4><ul className="space-y-2 text-sm">{PAGES.map(([p, l]) => <li key={p}><a className="hover:text-gold" href={"#" + p}>{t(l)}</a></li>)}</ul></div>
         <div><h4 className="mb-3 font-semibold text-white">{t("Contact")}</h4><p className="text-sm">{SITE.phone}{SITE.email && <><br />{SITE.email}</>}<br />{SITE.address}</p>
           <div className="mt-4 flex gap-3">{[[Facebook, "facebook", "Facebook"], [Instagram, "instagram", "Instagram"], [Youtube, "youtube", "YouTube"]].filter(([, k]) => SITE.social[k]).map(([I, k, n]) => <a key={k} href={SITE.social[k]} target="_blank" rel="noreferrer" aria-label={n} className="grid h-9 w-9 place-items-center rounded-full border border-gold/50 transition hover:bg-gold hover:text-ink"><I size={16} /></a>)}</div></div>
@@ -648,15 +654,25 @@ export default function App() {
   const [products, setProducts] = useState(() => { try { return JSON.parse(sessionStorage.getItem("bonadi-products")) || []; } catch { return []; } });  // instant repaint from cache
   const [usingSavedProducts, setUsingSavedProducts] = useState(false);
   const [user, setUser] = useState(null), [profile, setProfile] = useState(null);
-  const loadProfile = useCallback(async (u) => { if (!u) return setProfile(null); const { data } = await supabase.from("profiles").select("*").eq("id", u.id).single(); setProfile(data); }, []);
+  const loadProfile = useCallback(async (u) => { if (!u) return setProfile(null); const { data } = await (await db()).from("profiles").select("*").eq("id", u.id).single(); setProfile(data); }, []);
   // Auth session (profile fetch deferred with setTimeout to avoid auth-callback deadlocks)
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { setUser(data.session?.user || null); loadProfile(data.session?.user); });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => { if (_e === "PASSWORD_RECOVERY") { sessionStorage.setItem("bonadi-recovery", "1"); setTimeout(() => { window.location.hash = "#/account"; }, 0); } setUser(s?.user || null); setTimeout(() => loadProfile(s?.user), 0); });
-    return () => subscription.unsubscribe();
+    let subscription, off = false;   // the SDK loads after first paint; the session is restored as soon as it arrives
+    db().then((sb) => { if (off) return;
+    sb.auth.getSession().then(({ data }) => { setUser(data.session?.user || null); loadProfile(data.session?.user); });
+    ({ data: { subscription } } = sb.auth.onAuthStateChange((_e, s) => { if (_e === "PASSWORD_RECOVERY") { sessionStorage.setItem("bonadi-recovery", "1"); setTimeout(() => { window.location.hash = "#/account"; }, 0); } setUser(s?.user || null); setTimeout(() => loadProfile(s?.user), 0); }));
+    });
+    return () => { off = true; subscription?.unsubscribe(); };
   }, [loadProfile]);
   // Referral capture: ?ref=CODE is remembered and attached to the order / signup
   useEffect(() => { captureRef(); }, []);
+  // Start downloading the 3D store as soon as someone points at / touches a link to it, so it opens faster
+  useEffect(() => {
+    let done = false;
+    const pre = (e) => { if (!done && e.target.closest?.('a[href="#/store"]')) { done = true; import("./Store3D.jsx"); } };
+    document.addEventListener("pointerover", pre, { passive: true }); document.addEventListener("touchstart", pre, { passive: true });
+    return () => { document.removeEventListener("pointerover", pre); document.removeEventListener("touchstart", pre); };
+  }, []);
   useEffect(() => {
     fetchProducts().then(({ data, isFallback }) => {
       if (!data) return;
@@ -705,7 +721,6 @@ export default function App() {
   if (path === "/store") return L(<Store3D products={products} cart={cart} onAdd={add} setCart={setCart} clear={() => setCart([])} profile={profile} />);
 
   return (<div className="bonadi-site" data-theme={theme}>
-    <Loader tagline={t("Pure Food, Honest Promise.")} />
     <ScrollProgress />
     <RouteCurtain path={path} />
     <Cursor />

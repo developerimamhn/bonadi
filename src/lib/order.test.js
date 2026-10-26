@@ -43,3 +43,12 @@ test('submitOrder sends a notification after successful checkout', async () => {
   assert.equal(result.data, 123);
   assert.equal(result.error, null);
 });
+
+test('validOrder accepts real BD numbers and rejects bad input', async () => {
+  const { validOrder } = await import('./order.js');
+  const f = (phone, name = 'Shafi', address = 'House 5, Road 2, Dhaka') => ({ name, phone, address });
+  for (const p of ['01712345678', '+8801712345678', '8801712345678', '017-1234-5678', '01912 345 678']) assert.equal(validOrder(f(p)), true, p);
+  for (const p of ['0171234567', '01212345678', '1712345678', '+8811712345678', 'abc']) assert.equal(validOrder(f(p)), false, p);
+  assert.equal(validOrder(f('01712345678', 'A')), false, 'name too short');
+  assert.equal(validOrder(f('01712345678', 'Shafi', 'Dhaka')), false, 'address too short');
+});
